@@ -1,0 +1,39 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="home"></ion-icon>
+      <strong>
+        PuntoDeVenta
+      </strong>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    
+    <ion-fab-button>
+      <ion-icon name="person"></ion-icon>
+    </ion-fab-button>
+
+    <ion-fab-list side="start">
+      <ion-fab-button color="light" target="_blank" rel="noopener noreferrer" href="https://github.com/arpemar98/PuntoDeVenta">
+        <ion-icon name="logo-github"></ion-icon>
+      </ion-fab-button>
+
+      <ion-fab-button color="light" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/in/arpemar98/">
+        <ion-icon name="logo-linkedin"></ion-icon>
+      </ion-fab-button>
+      
+    </ion-fab-list>
+  </ion-fab>
+
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">Tab 1</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <app-explore-container name="Tab 1 page"></app-explore-container>
+</ion-content>

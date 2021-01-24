@@ -1,0 +1,97 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="cart"></ion-icon>
+      <strong>
+        Carrito
+      </strong>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  
+  <ion-card style="width: 90%; margin: 10px auto 10px auto;">
+
+    <ion-card-content>
+
+      <ion-list>
+
+        <div *ngFor="let item of [1, 2, 3, 4, 6, 7]">
+
+          <ion-item>
+    
+            <ion-thumbnail slot="start">
+              <img src="./thumbnail.svg">
+            </ion-thumbnail>
+      
+            <ion-label>
+              <h3>NOMBRE DEL ARTICULO</h3>
+              <p>
+                <ion-icon name="pricetag"></ion-icon>
+                $300.00 c/u
+              </p>
+              <p>
+                <ion-icon name="cube"></ion-icon>
+                5 / 10 Unidades
+              </p>
+
+              <div *ngIf="!platform.is('desktop')">
+                <p>
+                <ion-chip color="warning">
+                  <ion-icon name="alert-circle"></ion-icon>
+                  <ion-label>Unidades insuficientes</ion-label>
+                </ion-chip>
+                </p>
+      
+                <ion-button slot="end" color="danger" (click)="removerDelCarrito()" expand="block">
+                  <ion-icon name="close" slot="icon-only"></ion-icon>
+                  Remover
+                </ion-button>
+              </div>
+
+            </ion-label>
+
+            <div *ngIf="platform.is('desktop')">
+              <ion-chip color="warning">
+                <ion-icon name="alert-circle"></ion-icon>
+                <ion-label>Unidades insuficientes</ion-label>
+              </ion-chip>
+    
+              <ion-button slot="end" color="danger"(click)="removerDelCarrito()">
+                <ion-icon name="close" ></ion-icon>
+                Remover
+              </ion-button>
+            </div>
+
+          </ion-item>
+    
+        </div>
+      
+      </ion-list>
+
+    </ion-card-content>    
+
+  </ion-card>
+
+  <ion-card style="width: 75%; margin: 10px auto 10px auto;">
+    <ion-card-content>
+      <ion-label>
+        <h1 class="ion-text-center">
+          Total: <strong>$456</strong>
+        </h1>
+      </ion-label>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card style="width: 75%; margin: 10px auto 10px auto;">
+    <ion-card-content>
+      <ion-button expand="full" color="success" (click)="venderArticulos()">
+        <ion-icon name="cash"></ion-icon>
+        Vender todo
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  
+</ion-content>

@@ -1,0 +1,100 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="library"></ion-icon>
+      <strong>
+        Articulos
+      </strong>
+      </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <ion-card style="width: 60%; margin: 10px auto 10px auto">
+    <ion-card-content>
+      <ion-button color="secondary" expand="block" (click)="agregarArticulo()">
+        <ion-icon name="add"></ion-icon>
+        Nuevo Articulo
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+  
+  <ion-list>
+
+    
+
+    <div *ngFor="let item of [1, 2, 3, 4, 6, 7]">
+    
+      <ion-item>
+
+        <ion-thumbnail slot="start">
+          <img src="./thumbnail.svg">
+        </ion-thumbnail>
+
+        <ion-label>
+          <h3>NOMBRE DEL ARTICULO</h3>
+          <p>
+            <ion-icon name="pricetag"></ion-icon>
+            $300.00
+          </p>
+          <p>
+            <ion-icon name="cube"></ion-icon>
+            5 Unidades
+          </p>
+
+          <p *ngIf="!platform.is('desktop')">
+            <ion-button color="success" (click)="venderArticulo()">
+              <ion-icon name="cash" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button color="warning" (click)="agregarArticuloAlCarrito()">
+              <ion-icon name="cart" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button color="secondary" (click)="editarArticulo()">
+              <ion-icon name="create" slot="icon-only"></ion-icon>
+            </ion-button>
+            <ion-button color="danger" (click)="eliminarArticulo()">
+              <ion-icon name="trash" slot="icon-only"></ion-icon>
+            </ion-button>
+          </p>
+        </ion-label>
+
+        <div *ngIf="platform.is('desktop')">
+
+          <ion-button slot="end" color="success" (click)="venderArticulo()">
+            <ion-icon name="cash"></ion-icon>
+            <ion-text>
+              Vender
+            </ion-text>
+          </ion-button>
+
+          <ion-button slot="end" color="warning" (click)="agregarArticuloAlCarrito()">
+            <ion-icon name="cart"></ion-icon>
+            <ion-text>
+              Agregar
+            </ion-text>
+          </ion-button>
+          
+          <ion-button slot="end" color="secondary" (click)="editarArticulo()">
+            <ion-icon name="create"></ion-icon>
+            <ion-text>
+              Editar
+            </ion-text>
+          </ion-button>
+
+          <ion-button slot="end" color="danger" (click)="eliminarArticulo()">
+            <ion-icon name="trash"></ion-icon>
+            <ion-text>
+              Eliminar
+            </ion-text>
+          </ion-button>
+
+        </div>
+      </ion-item>
+
+    </div>
+  
+  </ion-list>
+
+  
+</ion-content>
