@@ -9,7 +9,7 @@ Web Aplication Punto de Venta para evaluación Infejal
 * 2.- Instalar ionic: *$ npm install -g @ionic/cli*
 * 3.- Descargar este repositorio: (https://github.com/arpemar98/PuntoDeVenta)
 * 4.- Reconstruir NodeModules(dentro de la carpeta): *$ npm install*
-* 5.- Crear proyecto en Firebase(CloudFiresstore) y cambiar la configuración del archivo: *src/environments/environments.ts*
+* 5.- Crear proyecto en Firebase(CloudFirestore) y cambiar la configuración del archivo: *src/environments/environments.ts*
 
   *TUTORIAL:*
   https://medium.com/learn-ionic-framework/construye-una-app-con-ionic-y-firebase-paso-a-paso-218105b77263
