@@ -1,0 +1,23 @@
+
+{
+    'Articulos':[
+        'id': string,               // identificador
+        'data': {
+            'nombre': string,       // nombre del articulo
+            'image': string,        // imagen del Articulo
+            'precio': number,       // precio del articulo
+            'cantidad': number,     // cantidad del articulo
+            'enCarrito': number,    // cantidad en el carrito
+        }
+    ],
+    'Venta':[
+        'id': string,               // identificador
+        'data': {
+            'nombre': string,       // nombre del articulo
+            'fecha': string,        // fecha de venta
+            'precio': number,       // precio
+            'cantidad': number      // cantidad
+        }
+    ],
+}
+

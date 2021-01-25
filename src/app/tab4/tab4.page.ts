@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { Articulo } from '../classes/articulo';
 import { LoadingController } from '@ionic/angular';
 import { FirestoreService } from '../services/firestore.service';
 import { DatePipe } from '@angular/common'
@@ -128,7 +127,17 @@ export class Tab4Page implements OnInit {
           text: 'Guardar',
           handler: (alertData) => {
           
-            this.exportPDF(alertData.nombreArchivo); 
+            try{
+
+              this.exportPDF(alertData.nombreArchivo).then( () =>
+                console.log("Creating pdf...")
+              ); 
+
+            }catch(error){
+
+              console.log("error::", error);
+
+            }
 
           }
         }

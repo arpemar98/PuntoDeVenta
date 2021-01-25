@@ -24,10 +24,13 @@
       </ion-card-content>
     </ion-card>
 
-    <ion-card style="width: 80%; margin: 5px auto 10px auto;" >
+    <ion-card style="width: 85%; margin: 5px auto 10px auto;" >
       <ion-card-content>
 
-        <div id="element-to-print" style="background-color: whitesmoke; color: grey;" *ngIf="listaDeVentas.length > 0; else noVentas">
+        <div 
+          id="element-to-print" 
+          style="background-color: whitesmoke; color: grey; overflow: auto;white-space: nowrap;"
+          *ngIf="listaDeVentas.length > 0; else noVentas">
 
           <div class="ion-text-center" >
             <h2 >

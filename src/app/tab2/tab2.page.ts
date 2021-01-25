@@ -130,6 +130,10 @@ export class Tab2Page implements OnInit {
           
           handler: (alertData) => {
 
+            if(alertData.cantidad > articulo.data.cantidad){
+              alertData.cantidad = articulo.data.cantidad;
+            }
+
             this.confirmarVenderArticulo(articulo, alertData.cantidad);
 
           }
@@ -224,6 +228,10 @@ export class Tab2Page implements OnInit {
           text: 'Añadir',
           handler: (alertData) => {
             console.log('Añadiendo al carrito...');
+
+            if(alertData.cantidad > articulo.data.cantidad){
+              alertData.cantidad = articulo.data.cantidad;
+            }
 
             articulo.data.cantidad = articulo.data.cantidad - alertData.cantidad; // DISMINUIR DISPONIBLES
 
