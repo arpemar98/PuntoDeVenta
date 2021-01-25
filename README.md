@@ -3,7 +3,7 @@
 Web Aplication Punto de Venta para evaluación Infejal
 
 
-##Instalación:                                                                                                                              
+## Instalación:                                                                                                                              
 
 * 1.- Instalar NodeJs LTS: https://nodejs.org/es/                                                                                           
 * 2.- Instalar ionic: $ npm install -g @ionic/cli                                                                                           
