@@ -14,7 +14,12 @@
 
     <ion-tab-button tab="Carrito">
       <ion-icon name="cart"></ion-icon>
+      
       <ion-label>Carrito</ion-label>
+
+      <ion-badge [color]="(contadorCarrito > 0)? 'primary' : 'medium'">
+        {{contadorCarrito}}
+      </ion-badge>
     </ion-tab-button>
 
     <ion-tab-button tab="Reporte">

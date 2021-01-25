@@ -13,7 +13,11 @@
 
     <ion-card style="width: 60%; margin: 10px auto 10px auto;">
       <ion-card-content>
-        <ion-button expand="block" (click)="generatePDF()">
+        <ion-button 
+          [color]="(listaDeVentas.length > 0 )? 'primary' : 'medium'"
+          expand="block" 
+          [disabled]="(listaDeVentas.length == 0)? 'true' : 'false'"
+          (click)="generatePDF()" >
           <ion-icon name="save"></ion-icon>
           Guardar PDF
         </ion-button>
@@ -22,9 +26,8 @@
 
     <ion-card style="width: 80%; margin: 5px auto 10px auto;" >
       <ion-card-content>
-        
 
-        <div id="element-to-print" style="background-color: whitesmoke; color: grey;">
+        <div id="element-to-print" style="background-color: whitesmoke; color: grey;" *ngIf="listaDeVentas.length > 0; else noVentas">
 
           <div class="ion-text-center" >
             <h2 >
@@ -64,6 +67,16 @@
           </table>
 
         </div>
+
+        <ng-template #noVentas >
+            <ion-item>
+              <ion-label color="medium">
+                <h2 class="ion-text-center">
+                  {{loadingMsn}}
+                </h2>
+              </ion-label>
+            </ion-item>
+        </ng-template>
 
       </ion-card-content>
     </ion-card>

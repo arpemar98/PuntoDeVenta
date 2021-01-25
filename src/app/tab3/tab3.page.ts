@@ -22,6 +22,8 @@ export class Tab3Page {
     data: Articulo
   }[];
 
+  public loadingMsn:string;
+
   public total:number;
   public ventaPosible:boolean;
 
@@ -36,6 +38,7 @@ export class Tab3Page {
     this.obtenerArticulos();
     this.total = 0;
     this.ventaPosible = true;
+    this.loadingMsn = "Descargando datos...";
   }
 
   async removerDelCarrito(articulo:{ id: string,data: Articulo} ){
@@ -51,7 +54,8 @@ export class Tab3Page {
           text: 'Si, Remover',
           handler: () => {
             
-            articulo.data.enCarrito = 0;
+            articulo.data.cantidad += articulo.data.enCarrito;  // RECUPERAR DEL CARRITO
+            articulo.data.enCarrito = 0;  // VACIAR CARRITO
 
             this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
               console.log("Quitado del carrito...");
@@ -84,6 +88,7 @@ export class Tab3Page {
         this.listaDeArticulos = [];
         this.total = 0;
         this.ventaPosible = true;
+        this.loadingMsn = "Descargando datos...";
 
         resultadoConsulta.forEach((datos: any) => {
 
@@ -105,7 +110,11 @@ export class Tab3Page {
 
         });
         
-        console.log("collection:", this.listaDeArticulos);
+        if(this.listaDeArticulos.length == 0){
+          this.loadingMsn = "Carrito Vacio";
+        }
+
+        console.log("[Carrito Updated]");
         
         loading.dismiss();
 

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FirestoreService } from '../services/firestore.service';
 
 @Component({
   selector: 'app-tabs',
@@ -7,8 +8,34 @@ import { Component } from '@angular/core';
 })
 export class TabsPage {
 
-  constructor() {}
+  public contadorCarrito:number;
 
+  constructor(private firestoreService: FirestoreService,) {
+
+    this.contadorCarrito = 0;
+
+    this.obtenerContadorEnCarrito();
+  }
+
+  obtenerContadorEnCarrito(){
+    
+    this.firestoreService.consultarArticulos().subscribe(
+
+      (resultadoConsulta) => {
+        
+        this.contadorCarrito = 0;
+
+        resultadoConsulta.forEach((datos: any) => {
+
+          if(datos.payload.doc.data().enCarrito > 0){
+            this.contadorCarrito++;
+          }
+
+        });
+      }
+    )
+
+  }
   
 
 }

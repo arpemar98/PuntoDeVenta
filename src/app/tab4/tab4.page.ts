@@ -3,6 +3,7 @@ import { Articulo } from '../classes/articulo';
 import { LoadingController } from '@ionic/angular';
 import { FirestoreService } from '../services/firestore.service';
 import { DatePipe } from '@angular/common'
+import { AlertController } from '@ionic/angular';
 
 import * as html2pdf from 'html2pdf.js';
 
@@ -22,6 +23,8 @@ export class Tab4Page implements OnInit {
       fecha:Date
     }
   }[];
+
+  public loadingMsn:string;
   
   public total:number;
 
@@ -29,11 +32,13 @@ export class Tab4Page implements OnInit {
     public loadingController: LoadingController, 
     private firestoreService: FirestoreService,
     public datepipe: DatePipe,
+    private alertController: AlertController
   ) { 
     
     this.listaDeVentas = [];
     this.total = 0;
     this.obtenerVentas();
+    this.loadingMsn = "Descargando datos...";
   }
 
   ngOnInit() { }
@@ -56,6 +61,7 @@ export class Tab4Page implements OnInit {
 
         this.listaDeVentas = [];
         this.total = 0;
+        this.loadingMsn = "Descargando datos...";
 
         resultadoConsulta.forEach((datos: any) => {
 
@@ -72,13 +78,21 @@ export class Tab4Page implements OnInit {
           this.total += (datos.payload.doc.data().precio * datos.payload.doc.data().cantidad);
 
         });
-        
-        this.listaDeVentas.sort( (a,b) => {
-          return (a.data.fecha > b.data.fecha)? 1 : -1
-        });
-         
 
-        console.log("collection:", this.listaDeVentas);
+        if(this.listaDeVentas.length > 0){  // SI HAY ELEMENTOS, ORDENALOS
+         
+          this.listaDeVentas.sort( (a,b) => {
+            return (a.data.fecha < b.data.fecha)? 1 : -1
+          }); 
+
+        }
+        else{ // SI NO NO MOSTRAR
+
+          this.loadingMsn = "Sin Ventas";
+
+        }         
+
+        console.log("[ReportsUpdated]");
 
         loading.dismiss();
       },
@@ -96,8 +110,38 @@ export class Tab4Page implements OnInit {
 
     let fecha = this.getFormatDate()
 
+    const alert = await this.alertController.create({
+      header: 'Guardar PDF',
+      message: 'Nombre del archivo',
+      inputs: [
+        {
+          name: 'nombreArchivo',
+          type: 'text',
+          value: 'reporte_' + fecha
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        }, {
+          text: 'Guardar',
+          handler: (alertData) => {
+          
+            this.exportPDF(alertData.nombreArchivo); 
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();   
+  }
+
+  async exportPDF(nombreArchivo:string){
+
     const loading = await this.loadingController.create({
-      duration: 300,
+      duration: 4000,
       message: 'Descargando PDF...',
       translucent: true,
       cssClass: 'custom-class custom-loading',
@@ -108,7 +152,7 @@ export class Tab4Page implements OnInit {
 
     var opt = {
       margin: 0.5,
-      filename: 'reporte_' + fecha + '.pdf',
+      filename: nombreArchivo + '.pdf',
       image: { type: 'jpeg', quality: 0.98 },
       html2canvas: { scale: 2 },
       jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
@@ -118,7 +162,6 @@ export class Tab4Page implements OnInit {
     
     html2pdf().from(element).set(opt).save();
 
-    const { role, data } = await loading.onDidDismiss();
   }
 
   getFormatDate() {
@@ -127,6 +170,8 @@ export class Tab4Page implements OnInit {
     let month = (date.getMonth() + 1).toString();
     let day = date.getDate().toString();
     let year = date.getFullYear().toString();
+    let hour = date.getHours().toString();
+    let min = date.getMinutes().toString();
 
 
     if (month.length < 2) {
@@ -135,8 +180,14 @@ export class Tab4Page implements OnInit {
     if (day.length < 2) {
       day = '0' + day;
     }
+    if (hour.length < 2) {
+      hour = '0' + hour;
+    }
+    if (min.length < 2) {
+      min = '0' + min;
+    }
 
-    return [year, month, day].join('_');
+    return [year, month, day].join('-') + "_" + hour + "-" + min;
 }
    
 

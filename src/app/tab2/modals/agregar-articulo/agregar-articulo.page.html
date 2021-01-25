@@ -41,7 +41,7 @@
           Nombre
         </strong>
       </ion-label>
-      <ion-input placeholder="playera" type="text" [(ngModel)]="articulo.nombre"></ion-input>
+      <ion-input required placeholder="playera" type="text" [(ngModel)]="articulo.nombre"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -50,8 +50,9 @@
         <strong>
           Precio
         </strong>
+        ($)
       </ion-label>
-      <ion-input placeholder="0.00" type="number" min="0" [(ngModel)]="articulo.precio"></ion-input>
+      <ion-input required placeholder="0.00" type="number" min="0" [(ngModel)]="articulo.precio"></ion-input>
     </ion-item>
 
     <ion-item>
@@ -61,7 +62,7 @@
           Cantidad
         </strong>
       </ion-label>
-      <ion-input placeholder="1" type="number" min="0" [(ngModel)]="articulo.cantidad"></ion-input>
+      <ion-input required placeholder="1" type="number" min="0" [(ngModel)]="articulo.cantidad"></ion-input>
     </ion-item>
 
   </ion-list> 

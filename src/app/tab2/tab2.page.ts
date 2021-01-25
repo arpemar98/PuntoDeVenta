@@ -26,6 +26,8 @@ export class Tab2Page implements OnInit {
     data: Articulo
   }[];
 
+  public loadingMsn:string;
+
   constructor(
     private alertController: AlertController,
     private modalController: ModalController,
@@ -38,6 +40,8 @@ export class Tab2Page implements OnInit {
     this.listaDeArticulos = [];
 
     this.obtenerArticulos();
+
+    this.loadingMsn = "Descargando datos...";
   }
 
   ngOnInit() {
@@ -61,6 +65,7 @@ export class Tab2Page implements OnInit {
       (resultadoConsulta) => {
 
         this.listaDeArticulos = [];
+        this.loadingMsn = "Descargando datos...";
 
         resultadoConsulta.forEach((datos: any) => {
 
@@ -71,8 +76,12 @@ export class Tab2Page implements OnInit {
           });
 
         });
+
+        if(this.listaDeArticulos.length == 0){
+          this.loadingMsn = "No hay Articulos";
+        }
         
-        console.log("collection:", this.listaDeArticulos);
+        console.log("[Articulos updated]");
         
         loading.dismiss();
 
@@ -140,6 +149,11 @@ export class Tab2Page implements OnInit {
         {
           type: 'text',
           disabled: true,
+          value: 'Precio: $' + (articulo.data.precio).toString() + ' c/u'
+        },
+        {
+          type: 'text',
+          disabled: true,
           value: 'Cantidad: ' + cantidad.toString()
         },
         {
@@ -190,7 +204,7 @@ export class Tab2Page implements OnInit {
   async agregarArticuloAlCarrito(articulo: {id:string, data:Articulo}){
 
     const alert = await this.alertController.create({
-      header: 'Agregar al carrito',
+      header: 'Añadir al carrito',
       subHeader: 'En carrito: ' + articulo.data.enCarrito,
       message: 'Ingrese la cantidad',
       inputs: [
@@ -207,18 +221,58 @@ export class Tab2Page implements OnInit {
           text: 'Cancelar',
           role: 'cancel'
         }, {
-          text: 'Agregar',
+          text: 'Añadir',
           handler: (alertData) => {
-            console.log('Agregando al carrito...');
+            console.log('Añadiendo al carrito...');
 
-            let enCarro = (articulo.data.enCarrito + parseInt(alertData.cantidad));
+            articulo.data.cantidad = articulo.data.cantidad - alertData.cantidad; // DISMINUIR DISPONIBLES
+
+            let enCarro = (articulo.data.enCarrito + parseInt(alertData.cantidad) ); // SUMO AL CARRO
 
             articulo.data.enCarrito = enCarro;
-            articulo.data.cantidad = articulo.data.cantidad - enCarro;
 
             this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
 
               console.log("En carrito: " + enCarro + "...");
+
+            });
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async agregarArticulos(articulo: {id:string, data:Articulo}){
+
+    const alert = await this.alertController.create({
+      header: 'Agregar ' + articulo.data.nombre,
+      subHeader: 'Actual: ' + articulo.data.cantidad,
+      message: '¿Cuantas unidades quiere agregar?',
+      inputs: [
+        {
+          name: 'cantidad',
+          type: 'number',
+          min: 1,
+          value: 1
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        }, {
+          text: 'Agregar',
+          handler: (alertData) => {
+            console.log('Agregando unidades...');
+
+            articulo.data.cantidad += parseInt(alertData.cantidad); // SUMAR
+
+            this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
+
+              console.log("Agregando: " + alertData.cantidad + "...");
 
             });
 
@@ -241,6 +295,7 @@ export class Tab2Page implements OnInit {
 
     modal.onDidDismiss().then(() => {
       this.obtenerArticulos();
+      console.log("[Articulo updated...]");
     });
     
     return await modal.present();
@@ -265,7 +320,8 @@ export class Tab2Page implements OnInit {
             this.firestoreService.borrarArticulo(articulo.id).then(() => {
               
               // Actualizar la lista completa
-              this.obtenerArticulos();
+              //this.obtenerArticulos();
+              console.log("[Eliminando " + articulo.data.nombre + "]");
 
             })
           }

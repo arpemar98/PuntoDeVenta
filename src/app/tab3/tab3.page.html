@@ -15,7 +15,7 @@
 
     <ion-card-content>
 
-      <ion-list>
+      <ion-list *ngIf="listaDeArticulos.length > 0; else noCarrito">
 
         <div *ngFor="let articulo of listaDeArticulos">
 
@@ -27,9 +27,11 @@
       
             <ion-label>
               <h3>
-                <strong>
-                  {{articulo.data.nombre}}
-                </strong>
+                <ion-chip>
+                  <strong>
+                    {{articulo.data.nombre}}
+                  </strong>
+                </ion-chip>
               </h3>
 
               <p>
@@ -54,13 +56,6 @@
               </p>
 
               <div *ngIf="!platform.is('desktop')">
-
-                <p *ngIf="articulo.data.enCarrito > articulo.data.cantidad">
-                <ion-chip color="warning">
-                  <ion-icon name="alert-circle"></ion-icon>
-                  <ion-label>Unidades insuficientes</ion-label>
-                </ion-chip>
-                </p>
       
                 <ion-button slot="end" color="danger" (click)="removerDelCarrito(articulo)" expand="block">
                   <ion-icon name="close" slot="icon-only"></ion-icon>
@@ -70,13 +65,7 @@
 
             </ion-label>
 
-            <div *ngIf="platform.is('desktop')">
-
-              <ion-chip color="warning" *ngIf="articulo.data.enCarrito > articulo.data.cantidad">
-                <ion-icon name="alert-circle"></ion-icon>
-                <ion-label>Unidades insuficientes</ion-label>
-              </ion-chip>
-    
+            <div *ngIf="platform.is('desktop')">    
               <ion-button slot="end" color="danger"(click)="removerDelCarrito(articulo)">
                 <ion-icon name="close" ></ion-icon>
                 Remover
@@ -88,6 +77,16 @@
         </div>
       
       </ion-list>
+
+      <ng-template #noCarrito>
+        <ion-item>
+          <ion-label color="medium">
+            <h2 class="ion-text-center">
+              {{loadingMsn}}
+            </h2>
+          </ion-label>
+        </ion-item>
+    </ng-template>
 
     </ion-card-content>    
 
@@ -107,7 +106,7 @@
     <ion-card-content>
       <ion-button 
         expand="full" 
-        color="success" 
+        [color]="(listaDeArticulos.length > 0)? 'success' : 'medium'" 
         [disabled]="(listaDeArticulos.length > 0)? 'false' : 'true'"
         (click)="venderArticulos()">
         <ion-icon name="cash"></ion-icon>

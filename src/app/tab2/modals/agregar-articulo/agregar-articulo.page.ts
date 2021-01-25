@@ -35,7 +35,7 @@ export class AgregarArticuloPage implements OnInit {
     this.firestoreService.insertarArticulo(this.articulo).then(
       () => {
 
-        console.log('Articulo creado correctamente!', this.articulo);
+        console.log("[Creando articulo...]");
         
       }, (error) => {
   
@@ -47,7 +47,6 @@ export class AgregarArticuloPage implements OnInit {
   }
 
   cambiarImagen($evento){
-    console.log("cambio", $evento);
 
     var reader = new FileReader();
 
