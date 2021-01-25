@@ -1,9 +1,85 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>EditarArticulo</ion-title>
+    <ion-title>
+      <ion-icon name="create"></ion-icon>
+      Editar Articulo
+    </ion-title>
+
+    <ion-button slot="end" color="danger" (click)="closeModal()">
+      <ion-icon name="close" slot="icon-only"></ion-icon>
+    </ion-button>
+
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
 
+  <ion-list>
+
+    <ion-item lines="none">
+      <ion-thumbnail style="margin: 5px auto 15px auto; width: 90%; max-width: 100px; height: 90%; max-height: 100px;">
+        <img [src]="articulo.data.image">
+      </ion-thumbnail>
+    </ion-item>
+
+    <div class="ion-text-center">
+      <ion-text>
+        <strong>
+          Cambiar imagen
+        </strong>
+      </ion-text>
+    </div>
+
+    <ion-item>
+      <input type="file" accept="image/png, image/jpeg, image/jpg" style="margin: auto;" (change)="cambiarImagen($event)">
+    </ion-item>
+    
+    <ion-item>
+      <ion-icon name="key" slot="start"></ion-icon>
+      <ion-label>
+        <strong>
+          Id
+        </strong>
+      </ion-label>
+      <ion-input type="text" disabled [(ngModel)]="articulo.id"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="library" slot="start"></ion-icon>
+      <ion-label>
+        <strong>
+          Nombre
+        </strong>
+      </ion-label>
+      <ion-input placeholder="playera" type="text" [(ngModel)]="articulo.data.nombre"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="cash" slot="start"></ion-icon>
+      <ion-label>
+        <strong>
+          Precio
+        </strong>
+      </ion-label>
+      <ion-input placeholder="0.00" type="number" min="0" [(ngModel)]="articulo.data.precio"></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-icon name="cube" slot="start"></ion-icon>
+      <ion-label>
+        <strong>
+          Cantidad
+        </strong>
+      </ion-label>
+      <ion-input placeholder="1" type="number" min="0" [(ngModel)]="articulo.data.cantidad"></ion-input>
+    </ion-item>
+
+  </ion-list> 
+
 </ion-content>
+
+<ion-footer>
+  <ion-button expand="block" (click)="actualizarArticulo()">
+    Modificar
+  </ion-button>
+</ion-footer>

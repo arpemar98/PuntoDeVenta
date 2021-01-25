@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 import { ModalController } from '@ionic/angular';
 import { AgregarArticuloPage} from './modals/agregar-articulo/agregar-articulo.page';
@@ -7,20 +7,85 @@ import { EditarArticuloPage } from './modals/editar-articulo/editar-articulo.pag
 import { AlertController } from '@ionic/angular';
 
 import { Platform } from '@ionic/angular';
+import { Articulo } from '../interfaces/articulo';
 
+import { FirestoreService } from '../services/firestore.service';
+import { DatePipe } from '@angular/common'
+
+import { LoadingController } from '@ionic/angular';
 
 @Component({
   selector: 'app-tab2',
   templateUrl: 'tab2.page.html',
   styleUrls: ['tab2.page.scss']
 })
-export class Tab2Page {
+export class Tab2Page implements OnInit {
+
+  public listaDeArticulos:{
+    id: string,
+    data: Articulo
+  }[];
 
   constructor(
     private alertController: AlertController,
     private modalController: ModalController,
-    public platform: Platform
-  ) {}
+    public platform: Platform,
+    private firestoreService: FirestoreService,
+    public datepipe: DatePipe,
+    public loadingController: LoadingController
+  ) {
+    
+    this.listaDeArticulos = [];
+
+    this.obtenerArticulos();
+  }
+
+  ngOnInit() {
+
+  }
+
+  async obtenerArticulos(){
+
+    const loading = await this.loadingController.create({
+      message: 'Cargando...',
+      translucent: true,
+      cssClass: 'custom-class custom-loading',
+      backdropDismiss: true,
+      spinner: 'bubbles'
+    });
+
+    await loading.present();
+        
+    this.firestoreService.consultarArticulos().subscribe(
+      
+      (resultadoConsulta) => {
+
+        this.listaDeArticulos = [];
+
+        resultadoConsulta.forEach((datos: any) => {
+
+          this.listaDeArticulos.push({
+
+            id: datos.payload.doc.id,
+            data: datos.payload.doc.data(),
+          });
+
+        });
+        
+        console.log("collection:", this.listaDeArticulos);
+        
+        loading.dismiss();
+
+      },
+      (error) =>{
+
+        console.error("Error al obtener articulos:", error);
+
+        loading.dismiss();
+      }
+      
+    );
+  }
 
   async agregarArticulo() {
 
@@ -28,65 +93,135 @@ export class Tab2Page {
       component: AgregarArticuloPage,
     });
 
-    return await modal.present();
+    return await modal.present();    
   }
 
-  async venderArticulo(){
+  async venderArticulo(articulo: {id:string, data:Articulo}){
+
     const alert = await this.alertController.create({
-      header: 'Vender Articulo',
+      header: 'Vender ' + articulo.data.nombre,
       message: 'Ingrese la cantidad',
       inputs: [
         {
-          name: 'name7',
+          name: 'cantidad',
           type: 'number',
-          min: '1',
-          value: '1'
-        }
+          min: 1,
+          max: articulo.data.cantidad,
+          value: 1
+        },
       ],
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
+          cssClass: 'secondary'
+        }, 
+        {
+          text: 'Continuar',
+          
+          handler: (alertData) => {
+
+            this.confirmarVenderArticulo(articulo, alertData.cantidad);
+
           }
-        }, {
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async confirmarVenderArticulo(articulo: {id:string, data:Articulo}, cantidad:number){
+
+    const alertConfirm = await this.alertController.create({
+      header: 'Vender ' + articulo.data.nombre,
+      message: 'Revise la información',
+      inputs: [
+        {
+          type: 'text',
+          disabled: true,
+          value: 'Cantidad: ' + cantidad.toString()
+        },
+        {
+          type: 'text',
+          disabled: true,
+          value: 'Total: $' + (articulo.data.precio * cantidad).toString()
+        },
+      ],
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        }, 
+        {
           text: 'Vender',
           handler: () => {
-            console.log('Confirm Ok');
+
+            console.log("Vendiendo " + articulo.data.nombre + "...");
+
+            let fecha = new Date();
+
+            articulo.data.cantidad = (articulo.data.cantidad - cantidad);  // restar
+
+            this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
+              console.log("Restando " + cantidad + "...");
+            });
+
+            this.firestoreService.insertarVenta(
+              {
+                nombre: articulo.data.nombre,
+                precio: articulo.data.precio,
+                cantidad: cantidad,
+                fecha: this.datepipe.transform(fecha, 'yyyy-MM-dd HH:mm:ss')
+              }
+            ).then(() =>{
+              console.log("Vendido el " + fecha.toString() + "!");
+            })
+
           }
         }
       ]
     });
 
-    await alert.present();
+    await alertConfirm.present();
   }
 
-  async agregarArticuloAlCarrito(){
+  async agregarArticuloAlCarrito(articulo: {id:string, data:Articulo}){
+
     const alert = await this.alertController.create({
       header: 'Agregar al carrito',
+      subHeader: 'En carrito: ' + articulo.data.enCarrito,
       message: 'Ingrese la cantidad',
       inputs: [
         {
-          name: 'name7',
+          name: 'cantidad',
           type: 'number',
-          min: '1',
-          value: '1'
+          min: 1,
+          max: articulo.data.cantidad,
+          value: 1
         }
       ],
       buttons: [
         {
           text: 'Cancelar',
-          role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
+          role: 'cancel'
         }, {
           text: 'Agregar',
-          handler: () => {
-            console.log('Confirm Ok');
+          handler: (alertData) => {
+            console.log('Agregando al carrito...');
+
+            let enCarro = (articulo.data.enCarrito + parseInt(alertData.cantidad));
+
+            articulo.data.enCarrito = enCarro;
+            articulo.data.cantidad = articulo.data.cantidad - enCarro;
+
+            this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
+
+              console.log("En carrito: " + enCarro + "...");
+
+            });
+
           }
         }
       ]
@@ -95,32 +230,44 @@ export class Tab2Page {
     await alert.present();
   }
 
-  async editarArticulo(){
-    console.log("editar");
+  async editarArticulo(articuloItem: {id:string, data: Articulo}){
 
     const modal = await this.modalController.create({
       component: EditarArticuloPage,
+      componentProps: { 
+        articulo: articuloItem
+      }
+    });
+
+    modal.onDidDismiss().then(() => {
+      this.obtenerArticulos();
     });
     
     return await modal.present();
   }
 
-  async eliminarArticulo(){
+  async eliminarArticulo(articulo:{id:string, data:Articulo}){
+
     const alert = await this.alertController.create({
-      header: 'Eliminar Articulo',
+
+      header: 'Eliminar ' + articulo.data.nombre,
       message: '¿Esta seguro de querer eliminar este articulo?',
       buttons: [
         {
           text: 'Cancelar',
           role: 'cancel',
-          cssClass: 'secondary',
-          handler: () => {
-            console.log('Confirm Cancel');
-          }
+          cssClass: 'primary',
         }, {
           text: 'Si, Eliminar',
+          cssClass: 'secondary',
           handler: () => {
-            console.log('Confirm Ok');
+            
+            this.firestoreService.borrarArticulo(articulo.id).then(() => {
+              
+              // Actualizar la lista completa
+              this.obtenerArticulos();
+
+            })
           }
         }
       ]

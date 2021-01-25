@@ -1,0 +1,71 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>
+      <ion-icon name="newspaper"></ion-icon>
+      <strong>
+        Reporte
+      </strong>
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+
+    <ion-card style="width: 60%; margin: 10px auto 10px auto;">
+      <ion-card-content>
+        <ion-button expand="block" (click)="generatePDF()">
+          <ion-icon name="save"></ion-icon>
+          Guardar PDF
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-card style="width: 80%; margin: 5px auto 10px auto;" >
+      <ion-card-content>
+        
+
+        <div id="element-to-print" style="background-color: whitesmoke; color: grey;">
+
+          <div class="ion-text-center" >
+            <h2 >
+              <strong >
+                Reporte
+              </strong>
+            </h2>
+          </div>
+
+          <table>
+            <tr>
+              <th>Producto</th>
+              <th>Precio</th>
+              <th>Cantidad</th>
+              <th>Fecha</th>
+              <th>Total</th>
+            </tr>
+
+            <tr *ngFor="let venta of listaDeVentas">
+              <td>{{venta.data.nombre}}</td>
+              <td>${{venta.data.precio}}</td>
+              <td>{{venta.data.cantidad}}</td>
+
+              <td>{{ this.datepipe.transform(venta.data.fecha, 'dd-MM-yyyy HH:mm:ss') }}</td>
+
+              <td>${{venta.data.precio * venta.data.cantidad}}</td>
+            </tr>
+
+            <tr>
+              <td><strong>Total</strong></td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td> <strong> ${{total}} </strong> </td>
+            </tr>
+            
+          </table>
+
+        </div>
+
+      </ion-card-content>
+    </ion-card>
+
+</ion-content>

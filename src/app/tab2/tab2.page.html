@@ -20,40 +20,53 @@
     </ion-card-content>
   </ion-card>
   
-  <ion-list>
+  <ion-list>    
 
-    
-
-    <div *ngFor="let item of [1, 2, 3, 4, 6, 7]">
+    <div *ngFor="let articulo of listaDeArticulos">
     
       <ion-item>
 
         <ion-thumbnail slot="start">
-          <img src="./thumbnail.svg">
+          <img [src]="(articulo.data.image)">
         </ion-thumbnail>
 
         <ion-label>
-          <h3>NOMBRE DEL ARTICULO</h3>
+          <h3>
+            <strong>
+              {{articulo.data.nombre}}
+            </strong>
+          </h3>
           <p>
-            <ion-icon name="pricetag"></ion-icon>
-            $300.00
+            <ion-badge color="success">
+              <ion-icon name="pricetag"></ion-icon>
+              $ {{articulo.data.precio}}
+            </ion-badge>
           </p>
           <p>
-            <ion-icon name="cube"></ion-icon>
-            5 Unidades
+            <ion-badge [color]="(articulo.data.cantidad > 0)? 'primary' : 'medium'">
+              <ion-icon name="cube"></ion-icon>
+              {{articulo.data.cantidad}}
+              Disponibles
+            </ion-badge>
+          </p>
+          <p *ngIf="articulo.data.enCarrito > 0" >
+            <ion-badge color="warning">
+              <ion-icon name="cart"></ion-icon>
+              {{articulo.data.enCarrito}} en carrito
+            </ion-badge>
           </p>
 
           <p *ngIf="!platform.is('desktop')">
-            <ion-button color="success" (click)="venderArticulo()">
+            <ion-button color="success" (click)="venderArticulo(articulo)" [disabled]="(articulo.data.cantidad >= 1)? 'false' : 'true'">
               <ion-icon name="cash" slot="icon-only"></ion-icon>
             </ion-button>
-            <ion-button color="warning" (click)="agregarArticuloAlCarrito()">
+            <ion-button color="warning" (click)="agregarArticuloAlCarrito(articulo)" [disabled]="(articulo.data.cantidad >= 1)? 'false' : 'true'">
               <ion-icon name="cart" slot="icon-only"></ion-icon>
             </ion-button>
-            <ion-button color="secondary" (click)="editarArticulo()">
+            <ion-button color="secondary" (click)="editarArticulo(articulo)">
               <ion-icon name="create" slot="icon-only"></ion-icon>
             </ion-button>
-            <ion-button color="danger" (click)="eliminarArticulo()">
+            <ion-button color="danger" (click)="eliminarArticulo(articulo)">
               <ion-icon name="trash" slot="icon-only"></ion-icon>
             </ion-button>
           </p>
@@ -61,28 +74,28 @@
 
         <div *ngIf="platform.is('desktop')">
 
-          <ion-button slot="end" color="success" (click)="venderArticulo()">
+          <ion-button slot="end" color="success" (click)="venderArticulo(articulo)" [disabled]="(articulo.data.cantidad >= 1)? 'false' : 'true'">
             <ion-icon name="cash"></ion-icon>
             <ion-text>
               Vender
             </ion-text>
           </ion-button>
 
-          <ion-button slot="end" color="warning" (click)="agregarArticuloAlCarrito()">
+          <ion-button slot="end" color="warning" (click)="agregarArticuloAlCarrito(articulo)" [disabled]="(articulo.data.cantidad >= 1)? 'false' : 'true'">
             <ion-icon name="cart"></ion-icon>
             <ion-text>
               Agregar
             </ion-text>
           </ion-button>
           
-          <ion-button slot="end" color="secondary" (click)="editarArticulo()">
+          <ion-button slot="end" color="secondary" (click)="editarArticulo(articulo)">
             <ion-icon name="create"></ion-icon>
             <ion-text>
               Editar
             </ion-text>
           </ion-button>
 
-          <ion-button slot="end" color="danger" (click)="eliminarArticulo()">
+          <ion-button slot="end" color="danger" (click)="eliminarArticulo(articulo)">
             <ion-icon name="trash"></ion-icon>
             <ion-text>
               Eliminar
@@ -95,6 +108,5 @@
     </div>
   
   </ion-list>
-
   
 </ion-content>

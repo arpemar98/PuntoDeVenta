@@ -17,34 +17,52 @@
 
       <ion-list>
 
-        <div *ngFor="let item of [1, 2, 3, 4, 6, 7]">
+        <div *ngFor="let articulo of listaDeArticulos">
 
           <ion-item>
     
             <ion-thumbnail slot="start">
-              <img src="./thumbnail.svg">
+              <img [src]="articulo.data.image">
             </ion-thumbnail>
       
             <ion-label>
-              <h3>NOMBRE DEL ARTICULO</h3>
+              <h3>
+                <strong>
+                  {{articulo.data.nombre}}
+                </strong>
+              </h3>
+
               <p>
-                <ion-icon name="pricetag"></ion-icon>
-                $300.00 c/u
+                <ion-badge color="success">
+                  <ion-icon name="pricetag"></ion-icon>
+                  ${{articulo.data.precio}} c/u
+                </ion-badge>
               </p>
+
               <p>
-                <ion-icon name="cube"></ion-icon>
-                5 / 10 Unidades
+                <ion-badge color="secondary">
+                  <ion-icon name="cube"></ion-icon>
+                  {{articulo.data.enCarrito}} Unidades
+                </ion-badge>
+              </p>
+
+              <p>
+                <ion-badge color="warning">
+                  <ion-icon name="cash"></ion-icon>
+                  Total: $ {{articulo.data.enCarrito * articulo.data.precio}} 
+                </ion-badge>
               </p>
 
               <div *ngIf="!platform.is('desktop')">
-                <p>
+
+                <p *ngIf="articulo.data.enCarrito > articulo.data.cantidad">
                 <ion-chip color="warning">
                   <ion-icon name="alert-circle"></ion-icon>
                   <ion-label>Unidades insuficientes</ion-label>
                 </ion-chip>
                 </p>
       
-                <ion-button slot="end" color="danger" (click)="removerDelCarrito()" expand="block">
+                <ion-button slot="end" color="danger" (click)="removerDelCarrito(articulo)" expand="block">
                   <ion-icon name="close" slot="icon-only"></ion-icon>
                   Remover
                 </ion-button>
@@ -53,12 +71,13 @@
             </ion-label>
 
             <div *ngIf="platform.is('desktop')">
-              <ion-chip color="warning">
+
+              <ion-chip color="warning" *ngIf="articulo.data.enCarrito > articulo.data.cantidad">
                 <ion-icon name="alert-circle"></ion-icon>
                 <ion-label>Unidades insuficientes</ion-label>
               </ion-chip>
     
-              <ion-button slot="end" color="danger"(click)="removerDelCarrito()">
+              <ion-button slot="end" color="danger"(click)="removerDelCarrito(articulo)">
                 <ion-icon name="close" ></ion-icon>
                 Remover
               </ion-button>
@@ -78,7 +97,7 @@
     <ion-card-content>
       <ion-label>
         <h1 class="ion-text-center">
-          Total: <strong>$456</strong>
+          Total: <strong>${{total}}</strong>
         </h1>
       </ion-label>
     </ion-card-content>
@@ -86,7 +105,11 @@
 
   <ion-card style="width: 75%; margin: 10px auto 10px auto;">
     <ion-card-content>
-      <ion-button expand="full" color="success" (click)="venderArticulos()">
+      <ion-button 
+        expand="full" 
+        color="success" 
+        [disabled]="(listaDeArticulos.length > 0)? 'false' : 'true'"
+        (click)="venderArticulos()">
         <ion-icon name="cash"></ion-icon>
         Vender todo
       </ion-button>
