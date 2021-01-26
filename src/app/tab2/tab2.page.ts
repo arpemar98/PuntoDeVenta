@@ -227,15 +227,40 @@ export class Tab2Page implements OnInit {
         }, {
           text: 'Añadir',
           handler: (alertData) => {
+            
+            this.confirmarAgregarArticuloAlCarrito(articulo, parseInt(alertData.cantidad) );
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async confirmarAgregarArticuloAlCarrito(articulo: {id:string, data:Articulo}, cantidad){
+
+    if(cantidad > articulo.data.cantidad){
+      cantidad = articulo.data.cantidad;
+    }
+
+    const alert = await this.alertController.create({
+      header: 'Añadir ' + articulo.data.nombre,
+      subHeader: 'Estos articulos no estarán disponibles',
+      message: '¿Quiere añadir ' + cantidad + ' ' + articulo.data.nombre + '(s) al carrito?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        }, {
+          text: 'Agregar (' + cantidad + ')',
+          handler: () => {
+
             console.log('Añadiendo al carrito...');
 
-            if(alertData.cantidad > articulo.data.cantidad){
-              alertData.cantidad = articulo.data.cantidad;
-            }
+            articulo.data.cantidad = articulo.data.cantidad - cantidad; // DISMINUIR DISPONIBLES
 
-            articulo.data.cantidad = articulo.data.cantidad - alertData.cantidad; // DISMINUIR DISPONIBLES
-
-            let enCarro = (articulo.data.enCarrito + parseInt(alertData.cantidad) ); // SUMO AL CARRO
+            let enCarro = (articulo.data.enCarrito + parseInt(cantidad) ); // SUMO AL CARRO
 
             articulo.data.enCarrito = enCarro;
 
@@ -272,15 +297,39 @@ export class Tab2Page implements OnInit {
           text: 'Cancelar',
           role: 'cancel'
         }, {
-          text: 'Agregar',
+          text: 'Continuar',
           handler: (alertData) => {
+
+            this.agregarArticulosConfirmar(articulo, parseInt(alertData.cantidad) );
+
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+  async agregarArticulosConfirmar(articulo: {id:string, data:Articulo}, cantidad:number){
+
+    const alert = await this.alertController.create({
+      header: 'Agregar ' + articulo.data.nombre,
+      message: '¿Quiere agregar ' + cantidad + ' ' + articulo.data.nombre + '(s) ?',
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel'
+        }, {
+          text: 'Agregar (' + cantidad + ')',
+          handler: () => {
+
             console.log('Agregando unidades...');
 
-            articulo.data.cantidad += parseInt(alertData.cantidad); // SUMAR
+            articulo.data.cantidad += cantidad; // SUMAR
 
             this.firestoreService.actualizarArticulo(articulo.id, articulo.data).then(() => {
 
-              console.log("Agregando: " + alertData.cantidad + "...");
+              console.log("Agregando: " + cantidad + "...");
 
             });
 
@@ -338,6 +387,10 @@ export class Tab2Page implements OnInit {
     });
 
     await alert.present();
+  }
+
+  validaInput($event, limite:number){
+
   }
 
 }
